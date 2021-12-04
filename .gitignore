@@ -1,2 +1,8 @@
-__pycache__
-/venv
+venv/
+.idea/
+
+# temporary files
+*.log
+*.pot
+*.pyc
+__pycache__/
