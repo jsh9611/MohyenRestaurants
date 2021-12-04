@@ -1,6 +1,9 @@
 venv/
 .idea/
 
+# data file
+restaurants.csv
+
 # temporary files
 *.log
 *.pot
