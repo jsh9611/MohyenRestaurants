@@ -1,6 +1,12 @@
 # pip freeze > requirements.txt 로 저장하며
 # 패키지를 설치할 가상환경에서
 # pip install -r requirements.txt 를 해주시면 됩니다.
+
+# 가상환경 설치하기
+# windows : python -m venv myvenv
+# linux : python3 -m venv myvenv
+# (myvenv 대신 c:\path\to\myenv와 같이 작성하면 원하는 경로에 가상환경 설치가능)
+
 # 가상환경 설치 후 pip 업그레이드 필수!
 # windows : python -m pip install --upgrade pip
 # linux : pip install --upgrade pip
