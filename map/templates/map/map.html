@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>모현 맛집</title>
-    <link rel="icon" type="image/x-icon" href="/static/image/favicon.ico" />
+    <!-- <link rel="icon" type="image/x-icon" href="/static/image/favicon.ico" /> -->
     
     <style>
 #mapwrap{position:relative;overflow:hidden;}
@@ -35,15 +35,13 @@
     <!-- 지도 위에 표시될 마커 카테고리 -->
     <div class="category">
         <ul>
-            <li id="coffeeMenu" onclick="changeMarker('coffee')">
-                <span class="ico_comm ico_coffee"></span>
+            <li id="koreanMenu" onclick="changeMarker('korean')">
                 한식<br>분식
             </li>
-            <li id="coffeeMenu" onclick="changeMarker('coffee')">
-                <span class="ico_comm ico_coffee"></span>
+            <li id="asianMenu" onclick="changeMarker('asian')">
                 아시안<br>양식
             </li>
-            <li id="coffeeMenu" onclick="changeMarker('coffee')">
+            <li id="chineseMenu" onclick="changeMarker('chinese')">
                 <span class="ico_comm ico_coffee"></span>
                 중국집
             </li>
@@ -98,18 +96,43 @@ var placeData = JSON.parse(document.getElementById('jsonData').textContent);
 for( var key1 in placeData){
     var jsonData = JSON.parse(placeData[key1]);
     count += 1
+    var content = {
+        title: jsonData['name'],
+        latlng: new kakao.maps.LatLng(jsonData['lat'], jsonData['lng']),
+    }
 
-    
+    if (jsonData['category'] == '한식/분식') {
+        koreanPositions.push(content);
+        // console.log(jsonData)
+    } else if (jsonData['category'] == '아시안/양식') {
+        asianPositions.push(content);
+    } else if (jsonData['category'] == '중국집') {
+        chinesePositions.push(content);
+    } else if (jsonData['category'] == '돈까스/회/일식') {
+        japanesePositions.push(content);
+    } else if (jsonData['category'] == '치킨/피자/햄버거') {
+        fastfoodPositions.push(content);
+    } else if (jsonData['category'] == '카페/디저트') {
+        cafePositions.push(content);
+    } // (jsonData['category'] == '야식')
+    else {
+        nightPositions.push(content);
+    }
+
 }
 
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div  
     mapOption = { 
-        center: new kakao.maps.LatLng(JSON.parse(placeData['item0'])['lat'], JSON.parse(placeData['item0'])['lng']), // 지도의 중심좌표 
-        level: 8 // 지도의 확대 레벨 
+        center: new kakao.maps.LatLng(37.3357915, 127.2532946), // 지도의 중심좌표 
+        // center: new kakao.maps.LatLng(JSON.parse(placeData['item0'])['lat'], JSON.parse(placeData['item0'])['lng']), // 지도의 중심좌표 
+        level: 3 // 지도의 확대 레벨 
     }; 
 
 var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 // 커피숍 마커가 표시될 좌표 배열입니다
 var coffeePositions = [ 
     new kakao.maps.LatLng(JSON.parse(placeData['item0'])['lat'], JSON.parse(placeData['item0'])['lng']),
@@ -148,20 +171,21 @@ new kakao.maps.LatLng(JSON.parse(placeData['item2'])['lat'], JSON.parse(placeDat
     new kakao.maps.LatLng(37.497680616783086, 127.02518427952202)                       
 ];
   
-// var markerImageSrc = '/static/image/category.png';
-var markerImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/category.png';  // 마커이미지의 주소입니다. 스프라이트 이미지 입니다
-    coffeeMarkers = [], // 커피숍 마커 객체를 가지고 있을 배열입니다
-    storeMarkers = [], // 편의점 마커 객체를 가지고 있을 배열입니다
-    carparkMarkers = []; // 주차장 마커 객체를 가지고 있을 배열입니다
+// var markerImageSrc = 'static/image/category.png';
+// var markerImageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/category.png';  // 마커이미지의 주소입니다. 스프라이트 이미지 입니다
+//     coffeeMarkers = [], // 커피숍 마커 객체를 가지고 있을 배열입니다
+//     storeMarkers = [], // 편의점 마커 객체를 가지고 있을 배열입니다
+//     carparkMarkers = []; // 주차장 마커 객체를 가지고 있을 배열입니다
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
 
-
-var imageSrc1 = "image/korean.png";
-var imageSrc2 = "image/asian.png";
-var imageSrc3 = "image/chinese.png";
-var imageSrc4 = "image/japanese.png";
-var imageSrc5 = "image/fastfood.png";
-var imageSrc6 = "image/cafe.png";
-var imageSrc7 = "image/night.png";
+var imageSrc1 = "/static/image/korean.png";
+var imageSrc2 = "/static/image/asian.png";
+var imageSrc3 = "/static/image/chinese.png";
+var imageSrc4 = "/static/image/japanese.png";
+var imageSrc5 = "/static/image/fastfood.png";
+var imageSrc6 = "/static/image/cafe.png";
+var imageSrc7 = "/static/image/night.png";
 
 var koreanMarkers = []; // 한식/분식 마커가 표시될 좌표 배열입니다
 var asianMarkers = []; // 아시안/양식 마커가 표시될 좌표 배열입니다
@@ -183,8 +207,8 @@ createCoffeeMarkers(); // 커피숍 마커를 생성하고 커피숍 마커 배�
 createStoreMarkers(); // 편의점 마커를 생성하고 편의점 마커 배열에 추가합니다
 createCarparkMarkers(); // 주차장 마커를 생성하고 주차장 마커 배열에 추가합니다
 
-// changeMarker('coffee'); // 지도에 커피숍 마커가 보이도록 설정합니다    
-
+// changeMarker('carpark'); // 지도에 커피숍 마커가 보이도록 설정합니다    
+changeMarker('korean');
 
 
 
@@ -207,21 +231,76 @@ function createMarker(position, image) {
 // 한식 마커를 생성하고 한식 마커 배열에 추가하는 함수입니다
 function createKoreanMarkers() {
     
-    for (var i = 0; i < coffeePositions.length; i++) {  
-        
-        var imageSize = new kakao.maps.Size(22, 26),
-            imageOptions = {  
-                spriteOrigin: new kakao.maps.Point(10, 0),    
-                spriteSize: new kakao.maps.Size(36, 98)  
-            };     
+    for (var i = 0; i < koreanPositions.length; i++) {  
         
         // 마커이미지와 마커를 생성합니다
-        var markerImage = createMarkerImage(markerImageSrc, imageSize, imageOptions),    
-            marker = createMarker(coffeePositions[i], markerImage);  
-        
+        var imageSize = new kakao.maps.Size(30, 30); 
+        var markerImage = new kakao.maps.MarkerImage(imageSrc1, imageSize);
+        var marker = new kakao.maps.Marker({
+            map: map, // 마커를 표시할 지도
+            position: koreanPositions[i].latlng, // 마커를 표시할 위치
+            title : koreanPositions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            image : markerImage // 마커 이미지 
+        });
+
         // 생성된 마커를 커피숍 마커 배열에 추가합니다
-        coffeeMarkers.push(marker);
+        // console.log(koreanPositions[i])
+        koreanMarkers.push(marker);
     }     
+}
+
+function setKoreanMarkers(map) {        
+    for (var i = 0; i < koreanMarkers.length; i++) {  
+        koreanMarkers[i].setMap(map);
+    }        
+}
+
+function createAsianMarkers() {
+    
+    for (var i = 0; i < asianPositions.length; i++) {  
+        
+        // 마커이미지와 마커를 생성합니다
+        var imageSize = new kakao.maps.Size(30, 30); 
+        var markerImage = new kakao.maps.MarkerImage(imageSrc2, imageSize);
+        var marker = new kakao.maps.Marker({
+            map: map, // 마커를 표시할 지도
+            position: asianPositions[i].latlng, // 마커를 표시할 위치
+            title : asianPositions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            image : markerImage // 마커 이미지 
+        });
+        // 생성된 마커를 마커 배열에 추가합니다
+        asianMarkers.push(marker);
+    }     
+}
+
+function setAsianMarkers(map) {        
+    for (var i = 0; i < asianMarkers.length; i++) {  
+        asianMarkers[i].setMap(map);
+    }        
+}
+
+function createChineseMarkers() {
+    
+    for (var i = 0; i < chinesePositions.length; i++) {  
+        
+        // 마커이미지와 마커를 생성합니다
+        var imageSize = new kakao.maps.Size(30, 30); 
+        var markerImage = new kakao.maps.MarkerImage(imageSrc3, imageSize);
+        var marker = new kakao.maps.Marker({
+            map: map, // 마커를 표시할 지도
+            position: chinesePositions[i].latlng, // 마커를 표시할 위치
+            title : chinesePositions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+            image : markerImage // 마커 이미지 
+        });
+        // 생성된 마커를 마커 배열에 추가합니다
+        asianMarkers.push(marker);
+    }     
+}
+
+function setAsianMarkers(map) {        
+    for (var i = 0; i < asianMarkers.length; i++) {  
+        asianMarkers[i].setMap(map);
+    }        
 }
 
 // 커피숍 마커를 생성하고 커피숍 마커 배열에 추가하는 함수입니다
@@ -236,6 +315,9 @@ function createCoffeeMarkers() {
             };     
         
         // 마커이미지와 마커를 생성합니다
+        var imageSize = new kakao.maps.Size(30, 30);
+        var markerImage = new kakao.maps.MarkerImage(imageSrc2, imageSize);
+        var marker = createMarker(koreanPositions[i], markerImage);
         var markerImage = createMarkerImage(markerImageSrc, imageSize, imageOptions),    
             marker = createMarker(coffeePositions[i], markerImage);  
         
@@ -309,51 +391,89 @@ function changeMarker(type){
     var coffeeMenu = document.getElementById('coffeeMenu');
     var storeMenu = document.getElementById('storeMenu');
     var carparkMenu = document.getElementById('carparkMenu');
+
+    var koreanMenu = document.getElementById('koreanMenu');
+    var asianMenu = document.getElementById('asianMenu');
+    var carparkMenu = document.getElementById('carparkMenu');
+    var carparkMenu = document.getElementById('carparkMenu');
+    var carparkMenu = document.getElementById('carparkMenu');
+    var carparkMenu = document.getElementById('carparkMenu');
+    var carparkMenu = document.getElementById('carparkMenu');
     
     // 커피숍 카테고리가 클릭됐을 때
     if (type === 'coffee') {
     
-        // 커피숍 카테고리를 선택된 스타일로 변경하고
-        coffeeMenu.className = 'menu_selected';
-        
-        // 편의점과 주차장 카테고리는 선택되지 않은 스타일로 바꿉니다
-        storeMenu.className = '';
-        carparkMenu.className = '';
+        // 커피숍 카테고리
+        // coffeeMenu.className = 'menu_selected';
+        // storeMenu.className = '';
+        // carparkMenu.className = '';
+        koreanMenu.className = '';
+        asianMenu.className = '';
         
         // 커피숍 마커들만 지도에 표시하도록 설정합니다
-        setCoffeeMarkers(map);
-        setStoreMarkers(null);
-        setCarparkMarkers(null);
+        // setCoffeeMarkers(map);
+        // setStoreMarkers(null);
+        // setCarparkMarkers(null);
+        setKoreanMarkers(null);
         
     } else if (type === 'store') { // 편의점 카테고리가 클릭됐을 때
     
         // 편의점 카테고리를 선택된 스타일로 변경하고
-        coffeeMenu.className = '';
-        storeMenu.className = 'menu_selected';
-        carparkMenu.className = '';
+        // coffeeMenu.className = '';
+        // storeMenu.className = 'menu_selected';
+        // carparkMenu.className = '';
+        koreanMenu.className = '';
         
         // 편의점 마커들만 지도에 표시하도록 설정합니다
-        setCoffeeMarkers(null);
-        setStoreMarkers(map);
-        setCarparkMarkers(null);
+        // setCoffeeMarkers(null);
+        // setStoreMarkers(map);
+        // setCarparkMarkers(null);
+        setKoreanMarkers(null);
         
     } else if (type === 'carpark') { // 주차장 카테고리가 클릭됐을 때
      
         // 주차장 카테고리를 선택된 스타일로 변경하고
-        coffeeMenu.className = '';
-        storeMenu.className = '';
-        carparkMenu.className = 'menu_selected';
+        // coffeeMenu.className = '';
+        // storeMenu.className = '';
+        // carparkMenu.className = 'menu_selected';
+        koreanMenu.className = '';
         
         // 주차장 마커들만 지도에 표시하도록 설정합니다
-        setCoffeeMarkers(null);
-        setStoreMarkers(null);
-        setCarparkMarkers(map);  
-    }    
+        // setCoffeeMarkers(null);
+        // setStoreMarkers(null);
+        setKoreanMarkers(null);
+        setAsianMarkers(null);
+
+    } else if (type === 'korean') {
+        // 한식 카테고리를 선택된 스타일로 변경하고
+        // coffeeMenu.className = '';
+        // storeMenu.className = '';
+        // carparkMenu.className = '';
+        koreanMenu.className = 'menu_selected';
+        asianMenu.className = '';
+    
+
+        
+        // 한식 마커들만 지도에 표시하도록 설정합니다
+        // setCoffeeMarkers(null);
+        // setStoreMarkers(null);
+        // setCarparkMarkers(null);
+
+        setKoreanMarkers(map);
+        setAsianMarkers(null);
+
+    } else if (type === 'asian') {
+        koreanMenu.className = '';
+        asianMenu.className = 'menu_selected';
+
+        setKoreanMarkers(null);
+        setAsianMarkers(map);
+    }
 } 
 </script>
 <!-- <img src="/static/image/korean.png" > -->
 <div>
-    <img src="{%static 'image/asian.png' %}">
+    <!-- <img src="{%static 'image/asian.png' %}"> -->
     <!-- {% load static %}
 <img src="{% static 'image/asian.png' %}" alt="My image"> -->
     <!-- <img src="/static/image/japanese.png"> -->
