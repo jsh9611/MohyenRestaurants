@@ -15,8 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('map/', include('map.urls')),
+    path('admin/', admin.site.urls), # admin/ 이라면 admin.site.urls 에서 처리한다.
+    path('map/', include('map.urls')), # map/ 이라면 map.urls 에서 처리한다.
+    path('board/', include('board.urls')), # board/ 라면 board.urls 에서 처리한다.
+    path('', include('page.urls')), # url 에 아무것도 입력되지 않는다면 page.urls 에서 처리한다.
+    path('accounts/', include('allauth.urls')), # accounts/ 라면 allauth.urls 에서 처리한다.
+    path('markdownx/', include('markdownx.urls')), # markdownx/ 라면 markdownx.urls 에서 처리한다.
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT) # static 파일들을 가져오기 위해 추가

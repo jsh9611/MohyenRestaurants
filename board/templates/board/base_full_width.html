@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+{% load static %} <!-- static 불러오기 -->
+<html lang = "ko">
+<html>
+<head>
+    <title>{% block head_title %}게시판{% endblock %}</title>
+    <link rel = "stylesheet" href = "{% static 'board/bootstrap/bootstrap.min.css' %}" media = "screen">
+
+
+</head>
+
+<body style = "background-image : url('/static/image/맛집배경1.png'); background-size: cover;">
+    {% include 'board/navbar.html' %} <!-- board/navbar.html 을 불러온다. 상단 네비게이션 바 -->
+
+    <div class = "container my-3">
+        <div class = "row">
+            <div class = "col-12" id = "main-area">
+                {% block main_area %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+</html>
+
+<!-- 수정 완료 2021.11.24 -->

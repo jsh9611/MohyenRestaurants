@@ -1,0 +1,34 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+
+<div id = "container" style = "border : 3px solid 	black; background-color : white; padding : 5px 20px; position : absolute; top : 50%; left : 50%; width : 450px; height : 250px; margin-left : -220px; margin-top : -170px; display : flex; flex-direction : column; justify-content : center; align-items : center;">
+  <h1 style = "color : black;">로그아웃할까요?</h1><br/>
+
+  
+
+  <form method="post" action="{% url 'account_logout' %}">
+    {% csrf_token %}
+    {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+    {% endif %}
+    <button type="button" class = "btn btn-sm btn-success" onclick="goBack()" href = "#">뒤로 가기</button>
+    <button type="submit" class = "btn btn-sm btn-danger">로그아웃</button>
+    
+  </form>
+</div>
+
+<!-- 뒤로 가기. 이전 페이지로 이동 -->
+<script>
+    function goBack() {
+      window.history.back();
+    }
+</script>      
+
+
+
+{% endblock %}

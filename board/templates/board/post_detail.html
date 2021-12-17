@@ -1,0 +1,141 @@
+{% extends 'board/base.html' %}
+{% load crispy_forms_tags %} <!--  -->
+
+{% block head_title %}
+    {{ post.title }} - 게시판
+{% endblock %}
+
+{% block main_area %}
+
+<!-- 수정 완료 -->
+
+                        <div id = "post-area" class = "my-5">
+                            <div class = "card">
+                                <div class = "card-header">
+                            
+                            <!-- Post title -->
+                            
+                            {% if post.category %} <!-- post.category 가 존재할 때 -->
+                                <span class = "badge badge-secondary float-right">{{ post.category }}</span>
+                            {% else %} <!-- post.category 가 존재하지 않을 때 -->
+                                <span class = "badge badge-secondary float-right">기타</span>
+                            {% endif %}
+                            <h1 class="fw-bolder mb-1">{{ post.title }}</h1> <!-- 제목 -->
+                            {% if user.is_authenticated and user == post.author %}
+                            <div class = "float-right">
+                                <a role = "button" class = "btn btn-sm btn-info"  href = "/board/update_post/{{ post.pk }}/">수정</a>
+                                <a role = "button"  class = "btn btn-sm btn-danger" onclick="location.href='/board/delete/{{ post.pk}}'">삭제</a>
+                                <!-- 유저가 작성자라면 글 삭제, 수정 가능 -->
+                            </div>
+
+                                                                
+                            {% endif %}
+                            <!-- 댓글에 작성자 표시 -->
+                            <p class = "lead">
+                                글쓴이 : 
+                                {{ post.author | upper }}
+                            </p>
+
+                            <!-- 작성 날짜 표시 -->
+                            <div class="text-muted fst-italic mb-2">{{ post.created_at }}</div>
+                                </div>
+                                <div class = "card-body">
+
+
+
+
+                        <!-- Preview image figure-->
+                        {% if post.upload_image %}
+                           <img class = "img-fluid rounded" src = "{{ post.upload_image.url }}" alt = "{{ post.title }} upload_image">
+                        {% endif %}
+
+
+                        <!-- Post content-->
+                        <section class="mb-5">
+                            <p>{{ post.get_content_markdown | safe }}</p>
+                            {% if post.upload_file %}
+                               <a href = "{{ post.upload_file.url }}" class = "btn btn-primary" role = "button" download>다운로드</a>
+                            {% endif %}
+                        </section>
+                        <div class = "float-right">
+                            <a role = "button" class = "btn btn-sm btn-warning"  href = "/board/">게시판으로</a>
+                        </div>
+                            
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    <!-- 댓글 작성 구역 -->
+                    <div class = "comment-area">
+                        <!-- 댓글 작성 폼 -->
+                        <div class = "card my-4">
+                            <h5 class = "card-header">댓글 남기기 </h5>
+                            <div class = "card-body">
+                                {% if user.is_authenticated %} <!-- 로그인이 되어있다면 작성된 댓글을 POST 방식으로 전달 -->
+                                <form id = "comment-form" method = "POST" action = "{{ post.get_absolute_url }}new_comment/">
+                                    {% csrf_token %}
+                                    <div class = "form-group">
+                                        {{ comment_form | crispy }} <!-- comment_form에 crispy 적용 -->
+                                    </div>
+                                    <button type = "submit" class = "btn btn-primary">작성</button>
+                                </form>
+                                {% else %} <!-- 로그인하지 않았을 시에는 댓글 작성 대신 로그인 후에 댓글을 남겨주세요 가 뜬다 -->
+                                    <a role = "button" class = "btn btn-outline-dark btn-block btn-sm" href = "#" data-toggle = "modal" data-target = "#loginModal">로그인 후에 댓글을 남겨주세요.</a>
+                                {% endif %}
+                           
+                        
+
+                        {% if post.comment_set.exists %} <!-- 게시물에 댓글이 존재한다면 실행 -->
+                            {% for comment in post.comment_set.iterator %}
+                            <hr/>
+                            <!-- comment -->
+                            <div class = "media mb-4" id = "comment-{{ comment.pk }}">
+                                <img class = "d-flex mr-3 rounded-circle" src = "http://placehold.it/50x50" alt = "">
+                                <div class = "media-body">
+                                    {% if user.is_authenticated and comment.author == user %}
+                                        <div class = "float-right">
+                                            <a role = "button" class = "btn btn-sm btn-info" id = "comment-{{ comment.pk }}-update-btn" href = "/board/update_comment/{{ comment.pk }}/">수정</a>
+                                            <a role = "button" href = "#" id = "comment-{{ comment.pk }}-delete-modal-btn" class = "btn btn-sm btn-danger" data-toggle = "modal" data-target = "#deleteCommentModal-{{ comment.pk }}">
+                                                삭제
+                                            </a>
+
+                                        </div>
+                                        <!-- Modal -->
+                                        <div class = "modal fade" id = "deleteCommentModal-{{ comment.pk }}" tabindex = "-1" role = "dialog" aria-labelledby = "deleteCommentModalLabel" aria-hidden = "true">
+                                            <div class = "modal-dialog" role = "document">
+                                                <div class = "modal-content">
+                                                    <div class = "modal-header">
+                                                        <h5 class = "modal-title" id = "deleteModalLabel">삭제하시겠습니까?</h5>
+                                                        <button type = "button" class = "close" data-dismiss = "modal" aria-label = "Close">
+                                                            <span aria-hidden = "true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class = "modal-body">
+                                                        <del>{{ comment | linebreaks }}</del>
+                                                    </div>
+                                                    <div class = "modal-footer">
+                                                        <button type = "button" class = "btn btn-secondary" data-dismiss="modal">취소</button>
+                                                        <a role = "button" class = "btn btn-danger" href = "/board/delete_comment/{{ comment.pk }}/">삭제</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                    <h5 class = "mt-0">{{ comment.author.username }} &nbsp;&nbsp;<small class = "text-muted">{{ comment.created_at }}</small></h5>
+                                    <p>{{ comment.content | linebreaks }}</p>
+                                    {% if comment.created_at != comment.modified_at %}
+                                        <p class = "text-muted float-right"><small>Updated: {{ comment.modified_at }}</small></p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    </div>
+                    </div>
+                    <hr/>
+                    
+{% endblock %}
+

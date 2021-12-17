@@ -1,0 +1,58 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+
+
+{% get_providers as socialaccount_providers %}
+
+{% if socialaccount_providers %}
+
+<div id = "container" style = "border : 1px solid black; background-color : white; padding : 5px 20px; position : absolute; top : 50%; left : 50%; width : 500px; height : 250px; margin-left : -270px; margin-top : -170px; display : flex; flex-direction : column; justify-content : center; align-items : center;">
+    
+      
+        <h2>{% blocktrans with site.name as site_name %}다음으로 로그인해주세요.{% endblocktrans %}</h2>
+      
+      
+        
+
+        
+        {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+        
+        
+          
+        
+        {% include "socialaccount/snippets/login_extra.html" %}
+        
+        {% else %}
+        <p>{% blocktrans %}If you have not created an account yet, then please
+        <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+        {% endif %}
+        
+        <button type="button" class = "btn btn-sm btn-secondary" onclick="goBack()" href = "#" style = "position : absolute; right : 0; bottom : 0; margin : 5px;">뒤로 가기</button>
+        
+        
+        
+
+      
+
+    
+
+
+
+
+     
+</div>
+
+<!-- 뒤로 가기. 이전 페이지로 이동 -->
+<script>
+  function goBack() {
+    window.history.back();
+  }
+</script>
+{% endblock %}

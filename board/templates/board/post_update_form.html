@@ -1,0 +1,23 @@
+{% extends 'board/base_full_width.html' %}
+{% load crispy_forms_tags %}
+{% block head_title %}Edit Post - 게시판{% endblock %}
+
+<!-- 게시물 수정 -->
+{% block main_area %}
+    
+    <hr/>
+    <div class = "card">
+        <div class = "card-header">
+            <h1>게시물 작성하기</h1>
+        </div>
+        <div class = "card-body">
+    <form method = "post" enctype = "multipart/form-data">{% csrf_token %}
+
+            {{ form | crispy }}
+            <br/>
+        <button type = "submit" class = "btn btn-primary float-right">작성</button>
+    </form>
+    {{ form.media }}
+    </div>
+</div>
+{% endblock %}

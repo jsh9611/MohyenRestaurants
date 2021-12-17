@@ -28,18 +28,19 @@ def showmap(request):
     rows = []
     for i in range(len(qs)):
         rows.append(qs.values()[i])
-    print(rows)
+    # print(rows)
 
     map_dict = {}
     
     for i in range(len(qs)):
         map_dict['item'+str(i)] = ( json.dumps(qs.values()[i], ensure_ascii=False) )
-    print(33333333333333)
-    print(map_dict)
+    # print(33333333333333)
+    # print(map_dict)
 
     # rows = (qs)
     context = {'rows': map_dict}
-    print(context)
+    # print(context)
+    # print(map_dict)
     return render(request, 'map/map.html', context)
 """
     for item in rst_data:
