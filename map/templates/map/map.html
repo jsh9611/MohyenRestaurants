@@ -2,20 +2,30 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>모현 맛집</title>
+    <title>{% block head_title %}모현 맛집 커뮤니티{% endblock %}</title>
+    <link rel = "stylesheet" href = "{% static 'board/bootstrap/bootstrap.min.css' %}" media = "screen">
+
     <style>
         #mapwrap{position:relative;overflow:hidden;}
         .category, .category *{margin:0;padding:0;color:#000;}   
-        .category {position: absolute; overflow:hidden;top:10px;left:10px;width:350px;height:50px;z-index:10;border:1px solid black;font-family:'Malgun Gothic','맑은 고딕',sans-serif;font-size:12px;text-align:center;background-color:#fff;}
+        .category {position: absolute; overflow:hidden;top:10px;left:10px;width:352px;height:45px;z-index:10;border:1px solid black;font-family:'Malgun Gothic','맑은 고딕',sans-serif;font-size:12px;text-align:center;background-color:#fff;}
         .category .menu_selected {background:#FF5F4A;color:#fff;border-left:1px solid #915B2F;border-right:1px solid #915B2F;margin:0 -1px;} 
         .category li{list-style:none;float:left;width:50px;height:45px;padding-top:5px;cursor:pointer;} 
-    </style>
+
+        .label {margin-bottom: 96px;}
+        .label * {display: inline-block;vertical-align: top;}
+        .label .left {background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_l.png") no-repeat;display: inline-block;height: 24px;overflow: hidden;vertical-align: top;width: 7px;}
+        .label .center {background: url(https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_bg.png) repeat-x;display: inline-block;height: 24px;font-size: 12px;line-height: 24px;}
+        .label .right {background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_r.png") -1px 0  no-repeat;display: inline-block;height: 24px;overflow: hidden;width: 6px;}
+</style>
 </head>
-<body>
-<h3>카테고리를 클릭하세요</h3>
+<body style = "background-image : url('/static/image/맛집배경1.png'); background-size: cover; background-repeat : no-repeat;">
+{% include 'board/navbar.html' %}
+<div style="height:10px; width:100%; background-color: #FFFFF0"></div>
+<div style="height:50px; width:100%; background-color: #FFFFF0"><h2>카테고리를 클릭하세요</h2></div>
 <div id="mapwrap"> 
     <!-- 지도가 표시될 div -->
-    <div id="map" style="width:100%;height:350px;"></div>
+    <div id="map" style="width:100%;height:60%; border: 3px dotted rgb(0, 0, 0);"></div>
     <!-- 지도 위에 표시될 마커 카테고리 -->
     <div class="category">
         <ul>
@@ -35,15 +45,15 @@
                 패스트<br>푸드
             </li>
             <li id="cafeMenu" onclick="changeMarker('cafe')">
-                야식
+                카페<br>디저트
             </li>
             <li id="nightMenu" onclick="changeMarker('night')">
-                카페<br>디저트
+                야식
             </li>
         </ul>
     </div>
 </div>
-
+<div style="height:5px; width:100%; background-color: #FFFFF0"></div>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=251b8f774a903203113d7451b7f27d68"></script>
 
 {{ rows | json_script:'jsonData'}}
@@ -110,13 +120,16 @@ var fastfoodMarkers = []; // 패스트푸드 마커가 표시될 좌표 배열�
 var cafeMarkers = []; // 카페/디저트 마커가 표시될 좌표 배열입니다
 var nightMarkers = []; // 야식 마커가 표시될 좌표 배열입니다
 
-createKoreanMarkers(); // 0 마커를 생성하고 0 마커 배열에 추가합니다
-createAsianMarkers(); // 마커를 생성하고 마커 배열에 추가합니다
-createChineseMarkers(); // 마커를 생성하고 마커 배열에 추가합니다
-createJapaneseMarkers(); // 마커를 생성하고 마커 배열에 추가합니다
-createFastfoodMarkers(); // 마커를 생성하고 마커 배열에 추가합니다
-createCafeMarkers(); // 마커를 생성하고 마커 배열에 추가합니다
-createNightMarkers(); // 마커를 생성하고 마커 배열에 추가합니다
+createKoreanMarkers(); // 한식 마커를 생성하고 마커 배열에 추가합니다
+createAsianMarkers(); // 아시안/양식 마커를 생성하고 마커 배열에 추가합니다
+createChineseMarkers(); // 중식 마커를 생성하고 마커 배열에 추가합니다
+createJapaneseMarkers(); // 돈까스/일식 마커를 생성하고 마커 배열에 추가합니다
+createFastfoodMarkers(); // 패스트푸드 마커를 생성하고 마커 배열에 추가합니다
+createCafeMarkers(); // 카페/디저트 마커를 생성하고 마커 배열에 추가합니다
+createNightMarkers(); // 야식 마커를 생성하고 마커 배열에 추가합니다
+
+var koreanWindows = [];
+// createKoreanWindows();
 
 // 처음 생성된 마커를 가려준다
 setKoreanMarkers(null);
@@ -126,6 +139,8 @@ setJapaneseMarkers(null);
 setFastfoodMarkers(null);
 setCafeMarkers(null);
 setNightMarkers(null);
+
+// setKoreanWindows(null);
 
 // 마커이미지의 주소와, 크기, 옵션으로 마커 이미지를 생성하여 리턴하는 함수입니다
 function createMarkerImage(src, size, options) {
@@ -155,17 +170,95 @@ function createKoreanMarkers() {
             map: map, // 마커를 표시할 지도
             position: koreanPositions[i].latlng, // 마커를 표시할 위치
             title : koreanPositions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-            image : markerImage // 마커 이미지 
+            image : markerImage, // 마커 이미지 
+            clickable: true
         });
+
+        // var iwContent = '<div>Hello</div>';
+        // var iwPosition = koreanPositions[i].latlng
+        // koreanWindows.push(marker);
+
+        // var infoWindow = '<div class="wrap"><div class="info"><div class="title">'
+        //     + koreanPositions[i].title + '<div class="close" onclick="closeOverlay()" title="닫기"></div>'
+        //     + '<div class="body"><div class="desc"><div class="ellipsis">' + '오리'
+        //     + '<div><a href="https://www.kakaocorp.com/main" target="_blank" class="link">홈페이지</a></div>'
+        //     + '</div></div></div></div>';
+        // var overlay = new kakao.maps.CustomOverlay({
+        //     content: infoWindow,
+        //     map: map,
+        //     position: marker.getPosition()       
+        // });
+        // function closeOverlay() {
+        //     overlay.setMap(null);
+        // }
+        // kakao.maps.event.addListener(marker, 'click', function() {
+        //     overlay.setMap(map);
+        // });
+        // closeOverlay()
+
 
         // 생성된 마커를 마커 배열에 추가합니다
         koreanMarkers.push(marker);
     }     
 }
+// function makeInfoWindow() {
+//     var infowindow = new kakao.maps.InfoWindow({
+//         position: 
+//     })
+// }
+
+
+
 // 지도에 마커를 추가합니다.
 function setKoreanMarkers(map) {        
-    for (var i = 0; i < koreanMarkers.length; i++) {  
+    for (var i = 0; i < koreanMarkers.length; i++) { 
+        // console.log(koreanMarkers[i])
+        var iwContent = '<div>' + koreanMarkers[i]['Gb'] + '</div>';
+        // console.log(koreanMarkers[i].getPosition()['La'], koreanMarkers[i].getPosition()['Ma']);
+        var iwPosition = new kakao.maps.LatLng(koreanMarkers[i].getPosition()['La'], koreanMarkers[i].getPosition()['Ma'])
+        var infowindow = new kakao.maps.InfoWindow({
+            position : iwPosition,
+            content : iwContent,
+            removable : true
+
+        });
+
+        // infowindow.open(map,koreanMarkers[i]);
+
+        // kakao.maps.event.addListener(koreanMarkers[i], 'click', function() {
+        //     infowindow.open(map, koreanMarkers[i]);
+        // });
+        var content = '<div class ="label"><span class="left"></span><span class="center">카카오!</span><span class="right"></span></div>';
+        var position = new kakao.maps.LatLng(33.450701, 126.570667); 
+
+
+var customOverlay = new kakao.maps.CustomOverlay({
+    position: position,
+    content: content   
+});
+
+        
         koreanMarkers[i].setMap(map);
+        customOverlay.setMap(map);
+
+
+
+
+
+        // var iwContent = '<div style="padding:5px;">'+ koreanMarkers[i]['title'] + '</div>';
+        // var infowindow = new kakao.maps.InfoWindow({
+        //     content : iwContent
+        // });
+        // // 마커에 마우스오버 이벤트를 등록합니다
+        // kakao.maps.event.addListener(koreanMarkers[0], 'mouseover', function() {
+        // // 마커에 마우스오버 이벤트가 발생하면 인포윈도우를 마커위에 표시합니다
+        //     infowindow.open(map, koreanMarkers[i]);
+        // });
+        // // 마커에 마우스아웃 이벤트를 등록합니다
+        // kakao.maps.event.addListener(koreanMarkers[0], 'mouseout', function() {
+        //     // 마커에 마우스아웃 이벤트가 발생하면 인포윈도우를 제거합니다
+        //     infowindow.close();
+        // });
     }        
 }
 
@@ -183,7 +276,9 @@ function createAsianMarkers() {
             title : asianPositions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
             image : markerImage // 마커 이미지 
         });
+
         // 생성된 마커를 마커 배열에 추가합니다
+
         asianMarkers.push(marker);
     }     
 }
@@ -191,7 +286,15 @@ function createAsianMarkers() {
 function setAsianMarkers(map) {        
     for (var i = 0; i < asianMarkers.length; i++) {  
         asianMarkers[i].setMap(map);
-    }        
+    }
+    var iwContent = '<div>' + koreanMarkers[2]['Gb'] + '</div>';
+    var iwPosition = new kakao.maps.LatLng(koreanMarkers[2].getPosition()['La'], koreanMarkers[2].getPosition()['Ma'])
+
+    var customOverlay = new kakao.maps.CustomOverlay({
+    position: iwPosition,
+    content: iwContent   
+});
+    customOverlay.setMap(map);
 }
 
 // 중국집 마커를 생성하고 마커 배열에 추가하는 함수입니다
@@ -384,7 +487,7 @@ function changeMarker(type){
         setNightMarkers(null);
 
     } else if (type === 'japanese') {
-        // 한식 카테고리를 선택된 스타일로 변경하고
+        // 일식 카테고리를 선택된 스타일로 변경하고
         koreanMenu.className = '';
         asianMenu.className = '';
         chineseMenu.className = '';
@@ -393,7 +496,7 @@ function changeMarker(type){
         cafeMenu.className = '';
         nightMenu.className = '';
         
-        // 한식 마커들만 지도에 표시하도록 설정합니다
+        // 일식 마커들만 지도에 표시하도록 설정합니다
         setKoreanMarkers(null);
         setAsianMarkers(null);
         setChineseMarkers(null);
@@ -403,7 +506,7 @@ function changeMarker(type){
         setNightMarkers(null);
 
     } else if (type === 'fastfood') {
-        // 한식 카테고리를 선택된 스타일로 변경하고
+        // 패스트푸드 카테고리를 선택된 스타일로 변경하고
         koreanMenu.className = '';
         asianMenu.className = '';
         chineseMenu.className = '';
@@ -412,7 +515,7 @@ function changeMarker(type){
         cafeMenu.className = '';
         nightMenu.className = '';
         
-        // 한식 마커들만 지도에 표시하도록 설정합니다
+        // 패스트푸드 마커들만 지도에 표시하도록 설정합니다
         setKoreanMarkers(null);
         setAsianMarkers(null);
         setChineseMarkers(null);
@@ -460,6 +563,7 @@ function changeMarker(type){
         setNightMarkers(map);
     }
 } 
+
 </script>
 </body>
 </html>
