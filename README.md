@@ -19,5 +19,8 @@
 4. 소셜로그인을 통해 로그인이 가능하며 글작성과 댓글 작성이 가능합니다.</br>
    본인이 아닌 제3자는 타인의 게시물이나 댓글을 수정하거나 삭제할 수 없습니다</br>
 
+### 노션 정리
+https://equinox-emmental-2a8.notion.site/ea65e87a2b654640b196d11ead6c2f0f
+
 ### 시연 및 발표영상
 https://youtu.be/NpTPevHGT3s
